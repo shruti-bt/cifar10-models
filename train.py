@@ -44,8 +44,13 @@ def run(args, device):
             total += targets.size(0)
             corrects += predicted.eq(targets).sum().item()
 
-            progress_bar(batch_idx, len(train_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                         % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
+            if args.colab:
+                if (batch_idx % args.print_itr == 0):
+                    print(batch_idx, len(train_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                            % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
+            else:
+                progress_bar(batch_idx, len(train_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                            % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
 
         train_loss.append(running_loss / len(train_loader))
         train_acc.append(corrects / total)
@@ -67,8 +72,13 @@ def run(args, device):
                 total += targets.size(0)
                 corrects += predicted.eq(targets).sum().item()
 
-                progress_bar(batch_idx, len(val_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                        % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
+                if args.colab:
+                    if (batch_idx % args.print_itr == 0):
+                        print(batch_idx, len(val_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                            % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
+                else:
+                    progress_bar(batch_idx, len(val_loader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                            % (running_loss/(batch_idx+1), 100.*corrects/total, corrects, total))
 
         val_loss.append(running_loss / len(val_loader))
         val_acc.append(corrects / total)
@@ -85,9 +95,10 @@ def run(args, device):
                 'acc': acc,
                 'epoch': epoch,
             }
-        if not os.path.isdir('checkpoint'):
-            os.mkdir('checkpoint')
-        torch.save(state, args.weights_path)
+        
+        torch.save(state, os.path.join(
+            args.weigths_path, f"{args.model_name}-{args.dataset}.pth")
+        )
         args.best_acc = acc
 
     # plot metrics
@@ -98,7 +109,9 @@ def run(args, device):
         ylabel="Accuracy", 
         xticks=np.arange(0, args.num_epochs+1, args.num_epochs//8),
         yticks=np.arange(0, 1.01, 0.2),
-        save_path=f"{args.model_name}-{args.dataset}_acc.svg"
+        save_path=os.path.join(
+            args.out_path, args.model_name, f"{args.model_name}-{args.dataset}_acc.svg"
+        )
     )
 
     plot_metrics(
@@ -108,6 +121,8 @@ def run(args, device):
         ylabel="Loss", 
         xticks=np.arange(0, args.num_epochs+1, args.num_epochs//8),
         yticks=None,
-        save_path=f"{args.model_name}-{args.dataset}_loss.svg"
+        save_path=os.path.join(
+            args.out_path, args.model_name, f"{args.model_name}-{args.dataset}_loss.svg"
+        )
     )
 

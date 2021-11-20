@@ -10,8 +10,7 @@ Organize your code as follows;
         but it is optional.
     -   Ask if you have some doubts. 
 """
-
-
+import os
 import torch
 import argparse
 
@@ -26,17 +25,25 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", type=str, default="vgg16", help="Name of the model.")
     parser.add_argument("--dataset", type=str, default="cifar10", help="Name of the dataset.")
     parser.add_argument("--batch_size", type=int, default=128, help="Name of the model.")
-    parser.add_argument("--weigths_path", type=str, default="./checkpoint/ckpt.pth", help="path to trained weights.")
+    parser.add_argument("--weigths_path", type=str, default="./checkpoints", help="path to trained weights.")
     parser.add_argument("--lr", type=float, default=0.1, help="learning rate for training.")
+    parser.add_argument("--colab", type=bool, default=False, help="Which platform is using for training.")
+    parser.add_argument("--out_path", type=str, default="./outputs", help="Save training metrics here.")
     parser.add_argument("--momentum", type=int, default=0.09, help="path to trained weights.")
     parser.add_argument("--num_epochs", type=int, default=10, help="for # iteration model will run on data.")
     parser.add_argument("--num_classes", type=float, default=3, help="numuber of objects + background.")
+    parser.add_argument("--best_acc", type=float, default=0, help="undertanding the value of accuracy.")
+    parser.add_argument("--print_itr", type=int, default=1, help="Print after # iterations.")
     
     args = parser.parse_args()
+    os.makedirs(args.weigths_path, exist_ok=True)
+    os.makedirs(os.path.join(args.out_path, args.model_name), exist_ok=True)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
+    print(f"Training on {device}.")
 
     if args.phase == "train":
         import train
+        print(f"Training the model {args.model_name}")
         train.run(args, device)
     elif args.phase == "test":
         import test
