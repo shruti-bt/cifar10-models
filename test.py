@@ -1,11 +1,11 @@
 r"""This files implements a testing steps for your model."""
 
+import os
 import argparse
 import torch
 import torch.nn as nn
 
-from model import vgg, VGG
-from utils import load_data, progress_bar
+from utils import load_data, load_model, progress_bar
 from collections import OrderedDict
 
 def run(args: argparse.Namespace, device: torch.device) -> None:
@@ -18,8 +18,12 @@ def run(args: argparse.Namespace, device: torch.device) -> None:
         
     """
     test_loader, classes = load_data(args)
-    model = vgg(args.model_name).to(device)
-    checkpoint = torch.load(args.weigths_path, map_location=device)
+    model = load_model(args.model_name).to(device)
+    checkpoint = torch.load(
+        # os.path.join(args.weigths_path, f"{args.model_name}-{args.dataset}.pth"),
+        f"{args.weigths_path}/{args.model_name}-{args.dataset}.pth",
+        map_location=device
+    )
     state_dict = OrderedDict((k.replace('module.', ''), v) for k, v in checkpoint['net'].items())
     model.load_state_dict(state_dict)
     criterion = nn.CrossEntropyLoss()

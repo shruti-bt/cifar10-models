@@ -6,7 +6,6 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 
-from model import vgg
 from utils import load_data, load_model, progress_bar, plot_metrics, load_model
 
 def run(args, device):

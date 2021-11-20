@@ -56,13 +56,13 @@ def load_data(args, is_train=False):
     else:
         return testloader, classes
 
-def load_model(args):
-    if args.model_name.startswith("vgg"):
-        from model.vgg import vgg
-        return vgg(model_name=args.model_name)
-    elif args.model_name.startswith("resnet"):
-        from model.resnet import resnet
-        return resnet(model_name=args.model_name)
+def load_model(model_name):
+    if model_name.startswith("vgg"):
+        from models.vgg import vgg
+        return vgg(model_name=model_name)
+    elif model_name.startswith("resnet"):
+        from models.resnet import resnet
+        return resnet(model_name=model_name)
     else:
         raise ValueError("Provide valid model name.")
 
