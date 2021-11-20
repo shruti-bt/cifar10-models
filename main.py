@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("phase", type=str)
-    parser.add_argument("--model_name", type=str, default="vgg16", help="Name of the model.")
+    parser.add_argument("--model_name", type=str, default="resnet50", help="Name of the model.")
     parser.add_argument("--dataset", type=str, default="cifar10", help="Name of the dataset.")
     parser.add_argument("--batch_size", type=int, default=128, help="Name of the model.")
     parser.add_argument("--weigths_path", type=str, default="./checkpoints", help="path to trained weights.")
